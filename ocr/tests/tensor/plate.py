@@ -1,47 +1,64 @@
 # -*- coding: utf-8 -*-
+import os
 import sys
 sys.path.append(r'../..')
 
-import os
 
-from ocr.model.tensor.cnn_plate import CnnTrainer
-from ocr.predict.tensor.cnn_plate import Predict
-
-data_dir = '/apps/data/dingjian_testing'
-
-dic_config = {
-    'movie_path': os.path.join(data_dir, 'raw/movies.csv'),
-    'rating_path': os.path.join(data_dir, 'raw/ratings.csv'),
-    'model_path': os.path.join(data_dir, 'model/item2vec'),
-
-    model_path = 'my_model_cnn',
-
-    x_train_path = r'E:\lizi\dingjian_testing\data\x_train_c65.npy'
-    y_train_path = r'E:\lizi\dingjian_testing\data\y_train_c65.npy'
-    x_test_path = r'E:\lizi\dingjian_testing\data\x_test_c65.npy'
-    y_test_path = r'E:\lizi\dingjian_testing\data\y_test_c65.npy'
-
-    model_path = 'my_model_cnn'
-    image_path = r'E:\lizi\dingjian_testing\picture\pic.jpg'
-    'chars' = ["京", "沪", "津", "渝", "冀", "晋", "蒙", "辽", "吉", "黑", "苏", "浙", "皖", "闽", "赣", "鲁", "豫", "鄂", "湘",
-             "粤", "桂", "琼", "川", "贵", "云", "藏", "陕", "甘", "青", "宁", "新", "0", "1", "2", "3", "4", "5", "6", "7",
-             "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U",
-             "V","W", "X", "Y", "Z"]
-}
+dic_config = {}
 
 
-def _train():
+def init():
+    global dic_config
+    data_dir = 'E:/lizi/dingjian_testing/data/'
+    # data_dir = '/apps/data/dingjian_testing/plate'
 
-    t = CnnTrainer(dic_config)
+    dic_config = {
+        # 'model_path': os.path.join(data_dir, 'resnet'),
+        'model_path': os.path.join(data_dir, 'my_model_cnn'),
+
+        'x_train_path': os.path.join(data_dir, 'x_train_c65.npy'),
+        'y_train_path': os.path.join(data_dir, 'y_train_c65.npy'),
+        'x_test_path': os.path.join(data_dir, 'x_test_c65.npy'),
+        'y_test_path': os.path.join(data_dir, 'y_test_c65.npy'),
+
+        'chars': ["京", "沪", "津", "渝", "冀", "晋", "蒙", "辽", "吉", "黑", "苏", "浙", "皖", "闽", "赣", "鲁", "豫", "鄂", "湘",
+                  "粤", "桂", "琼", "川", "贵", "云", "藏", "陕", "甘", "青", "宁", "新", "0", "1", "2", "3", "4", "5", "6", "7",
+                  "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "U",
+                  "V", "W", "X", "Y", "Z"],
+
+        'image_path': os.path.join(data_dir, 'picture/pic.jpg'),
+    }
+
+
+def generate():
+    pass
+
+
+def train():
+    # from model.tensor.cnn import Train
+    # from model.tensor.resnet import Train
+    from model.tensor.resnet1 import Train
+
+    t = Train(dic_config)
     t.run()
 
 
-def _infer():
+def predict():
+    # from predict.tensor.cnn import Predict
+    # from predict.tensor.resnet import Predict
+    from predict.tensor.resnet1 import Predict
 
-    i = Predict(dic_config)
-    i.run()
+    p = Predict(dic_config)
+    p.load(dic_config['model_path'])
+    pred, rs = p.predict(dic_config['image_path'])
+    print(rs)
+
+
+def run():
+    init()
+    # train()
+    predict()
 
 
 if __name__ == '__main__':
-    _train()
-    _infer()
+    run()
