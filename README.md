@@ -6,5 +6,5 @@
 
 # plate_detect_and_recognition
 * 基于CNN多标签分类的车牌检测与识别，检测使用的是传统算法，识别用的是CNN网络
-* 论文地址：https://kns.cnki.net/kcms/detail/detail.aspx?dbcode=CJFD&dbname=CJFDLAST2020&filename=XDXK202012027&v=MjA3OTkxRnJDVVI3cWZidVpuRnlIaFdydklQU25UWmJHNEhOSE5yWTlIWTRSOGVYMUx1eFlTN0RoMVQzcVRyV00=
+* [论文](https://kns.cnki.net/kcms/detail/detail.aspx?dbcode=CJFD&dbname=CJFDLAST2020&filename=XDXK202012027&v=MjA3OTkxRnJDVVI3cWZidVpuRnlIaFdydklQU25UWmJHNEhOSE5yWTlIWTRSOGVYMUx1eFlTN0RoMVQzcVRyV00=)
 
