@@ -51,10 +51,11 @@ def predict():
 
 def run():
     init()
-    plate_detect()
-    # train()
-    predict()
+    train()
+    # plate_detect()
+    # predict()
 
 
 if __name__ == "__main__":
     run()
+

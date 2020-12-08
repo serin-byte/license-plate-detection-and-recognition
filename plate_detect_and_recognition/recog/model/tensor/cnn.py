@@ -5,13 +5,13 @@ import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from tensorflow.keras import Model
-from recog.layer.tensor.cnn import Layer
+from recog.layer.tensor.cnn import Layer, Baseline, AlexNet8
 
 
 class Train:
 
     def __init__(self, dic_config={}):
-        
+
         self.model_path = dic_config['model_path']
 
         self.x_train = np.load(dic_config['x_train_path'])
@@ -28,7 +28,6 @@ class Train:
             self.y_test = np.load(dic_config['y_test_path'])
             self.validation_split = 0
 
-
     # 都是计算多分类crossentropy的，只是对y的格式要求不同。
     # 如果是categorical_crossentropy，那y必须是one-hot处理过的
     def categorical(self):
@@ -43,7 +42,10 @@ class Train:
 
     # 如果是sparse_categorical_crossentropy，那y就是原始的整数形式，比如[1, 0, 2, 0, 2]
     def train(self):
-        self.model = Layer()
+        # self.model = Layer()
+        # self.model = Baseline()
+        self.model = AlexNet8()
+
         if self.categorical_type == 1:
             self.categorical()
         elif self.categorical_type == 2:
@@ -51,12 +53,12 @@ class Train:
 
         if self.validation_split == 0:
             self.history = self.model.fit(self.x_train, self.y_train,
-                                      batch_size=64, epochs=1,
-                                      validation_data=(self.x_test, self.y_test),
-                                      validation_freq=1)
+                                          batch_size=16, epochs=10,
+                                          validation_data=(self.x_test, self.y_test),
+                                          validation_freq=1)
         else:
             self.history = self.model.fit(self.x_train, self.y_train,
-                                          batch_size=64, epochs=10,
+                                          batch_size=16, epochs=10,
                                           validation_split=self.validation_split)
 
         self.model.summary()
@@ -104,5 +106,3 @@ class Train:
         self.save()
         if self.demon:
             self.show()
-
-
