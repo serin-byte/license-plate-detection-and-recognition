@@ -80,7 +80,7 @@ class Baseline(Model):
 
         return y
 
-# 3.AlexNet8网络
+# 3.AlexNet8网络,调试完毕
 class AlexNet8(Model):
     def __init__(self):
         super(AlexNet8, self).__init__()
@@ -146,7 +146,7 @@ class AlexNet8(Model):
         return y
 
 
-# 4. Inception10网络
+# 4. Inception10网络，调试完毕
 class ConvBNRelu(Model):
     def __init__(self, ch, kernelsz=3, strides=1, padding='same'):
         super(ConvBNRelu, self).__init__()
@@ -189,7 +189,7 @@ class InceptionBlk(Model):
 
 
 class Inception10(Model):
-    def __init__(self, num_blocks=2, num_classes=10, init_ch=16, **kwargs):
+    def __init__(self, num_blocks=2, init_ch=16, **kwargs):
         super(Inception10, self).__init__(**kwargs)
         self.in_channels = init_ch
         self.out_channels = init_ch
@@ -207,16 +207,24 @@ class Inception10(Model):
             # enlarger out_channels per block
             self.out_channels *= 2
         self.p1 = GlobalAveragePooling2D()
-        self.f1 = Dense(num_classes, activation='softmax')
+
+        self.d1 = Dense(7 * 65)
+        self.r1 = Reshape([7, 65])
+        self.a1 = Activation("softmax")
 
     def call(self, x):
         x = self.c1(x)
         x = self.blocks(x)
         x = self.p1(x)
-        y = self.f1(x)
+
+        x = self.d1(x)
+        x = self.r1(x)
+        y = self.a1(x)
+
         return y
 
-# 5.LeNet5网络
+
+# 5.LeNet5网络，调试完毕
 class LeNet5(Model):
     def __init__(self):
         super(LeNet5, self).__init__()
@@ -231,7 +239,10 @@ class LeNet5(Model):
         self.flatten = Flatten()
         self.f1 = Dense(120, activation='sigmoid')
         self.f2 = Dense(84, activation='sigmoid')
-        self.f3 = Dense(10, activation='softmax')
+
+        self.d1 = Dense(7 * 65)
+        self.r1 = Reshape([7, 65])
+        self.a1 = Activation("softmax")
 
     def call(self, x):
         x = self.c1(x)
@@ -243,13 +254,15 @@ class LeNet5(Model):
         x = self.flatten(x)
         x = self.f1(x)
         x = self.f2(x)
-        y = self.f3(x)
+
+        x = self.d1(x)
+        x = self.r1(x)
+        y = self.a1(x)
         return y
 
-# 6.ResNet网络
 
+# 6.ResNet网络,调试完毕
 class ResnetBlock(Model):
-
     def __init__(self, filters, strides=1, residual_path=False):
         super(ResnetBlock, self).__init__()
         self.filters = filters
@@ -310,7 +323,10 @@ class ResNet18(Model):
                 self.blocks.add(block)  # 将构建好的block加入resnet
             self.out_filters *= 2  # 下一个block的卷积核数是上一个block的2倍
         self.p1 = tf.keras.layers.GlobalAveragePooling2D()
-        self.f1 = tf.keras.layers.Dense(10, activation='softmax', kernel_regularizer=tf.keras.regularizers.l2())
+
+        self.d1 = Dense(7 * 65, kernel_regularizer=tf.keras.regularizers.l2())
+        self.r1 = Reshape([7, 65])
+        self.a2 = Activation("softmax")
 
     def call(self, inputs):
         x = self.c1(inputs)
@@ -318,10 +334,15 @@ class ResNet18(Model):
         x = self.a1(x)
         x = self.blocks(x)
         x = self.p1(x)
-        y = self.f1(x)
-        return y
 
-# 7.VGG16网络
+        x = self.d1(x)
+        x = self.r1(x)
+        y = self.a2(x)
+        return y
+#############################
+
+
+# 7.VGG16网络,调试完毕
 class VGG16(Model):
     def __init__(self):
         super(VGG16, self).__init__()
@@ -384,7 +405,10 @@ class VGG16(Model):
         self.d6 = Dropout(0.2)
         self.f2 = Dense(512, activation='relu')
         self.d7 = Dropout(0.2)
-        self.f3 = Dense(10, activation='softmax')
+
+        self.f3 = Dense(7 * 65)
+        self.r1 = Reshape([7, 65])
+        self.a14 = Activation("softmax")
 
     def call(self, x):
         x = self.c1(x)
@@ -446,5 +470,9 @@ class VGG16(Model):
         x = self.d6(x)
         x = self.f2(x)
         x = self.d7(x)
-        y = self.f3(x)
+
+
+        x = self.f3(x)
+        x = self.r1(x)
+        y = self.a14(x)
         return y

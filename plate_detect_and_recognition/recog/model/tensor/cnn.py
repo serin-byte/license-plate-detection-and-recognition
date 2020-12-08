@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from tensorflow.keras import Model
-from recog.layer.tensor.cnn import Layer, Baseline, AlexNet8
+from recog.layer.tensor.cnn import Layer, Baseline, AlexNet8, Inception10, LeNet5, ResNet18, VGG16
 
 
 class Train:
@@ -44,7 +44,11 @@ class Train:
     def train(self):
         # self.model = Layer()
         # self.model = Baseline()
-        self.model = AlexNet8()
+        # self.model = AlexNet8()
+        # self.model = Inception10()
+        # self.model = LeNet5()
+        self.model = ResNet18()
+        # self.model = VGG16()
 
         if self.categorical_type == 1:
             self.categorical()
