@@ -22,7 +22,7 @@ class Detect:
     def findPlateNumberRegion(self, img):
         region = []
         # 查找外框轮廓
-        contours_img, contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        contours, hierarchy = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
         # print("contours lenth is :%s" % (len(contours)))
         # 筛选面积小的
@@ -141,6 +141,7 @@ class Detect:
 
         # 截取图像
         img_plate = self.img[y1:y2, x1:x2]
+        # 保存图像
         cv2.imwrite(self.save_path, img_plate)
 
         # 调整色差
