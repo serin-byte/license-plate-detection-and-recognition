@@ -2,48 +2,54 @@
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Conv2D, Activation, Flatten, Dense, MaxPooling2D, BatchNormalization, Reshape, \
-    Dropout, MaxPool2D, GlobalAveragePooling2D
+    Dropout, MaxPool2D, GlobalAveragePooling2D,AveragePooling2D
+import numpy as np
+
 
 # 1.自己的网络，调试完毕
 class Layer(Model):
     def __init__(self):
         super(Layer, self).__init__()
-        self.c1 = Conv2D(32, (3, 3), activation='relu')
-        # self.b1 = BatchNormalization(momentum=0.9)
-        # self.a1 = Activation('relu')
-        self.p1 = MaxPooling2D((2, 2), strides=2)
-        # self.d1 = Dropout(0.2)
+        self.c1 = Conv2D(32, (5, 5))
+        self.p1 = MaxPooling2D((2, 2), strides=1)
+        self.a1 = Activation('relu')
 
-        self.c2 = Conv2D(64, (3, 3), activation='relu')
-        # self.b2 = BatchNormalization(momentum=0.9)
-        self.p2 = MaxPooling2D((2, 2), strides=2)
-
-        self.c3 = Conv2D(128, (3, 3), activation='relu')
-        self.p3 = MaxPooling2D((2, 2), strides=2)
+        self.c2 = Conv2D(32, (5, 5))
+        self.p2 = AveragePooling2D((2, 2), strides=1)
+        self.a2 = Activation('relu')
 
         self.f4 = Flatten()
-        self.d4 = Dense(7 * 65)
-        self.r4 = Reshape([7, 65])
-        self.a4 = Activation("softmax")
+        self.d4 = Dense(120)
+        self.d5 = Dense(65, activation='softmax')
+
+        # 另一种方法
+        # self.d4 = Dense(7 * 65)
+        # self.r4 = Reshape([7, 65])
+        # self.a4 = Activation("softmax")
 
     def call(self, x):
         x = self.c1(x)
-        # x = self.b1(x)
         x = self.p1(x)
+        x = self.a1(x)
 
         x = self.c2(x)
-        # x = self.b2(x)
         x = self.p2(x)
-
-        x = self.c3(x)
-        x = self.p3(x)
+        x = self.a2(x)
 
         x = self.f4(x)
         x = self.d4(x)
-        x = self.r4(x)
-        y = self.a4(x)
+        x1 = self.d5(x)
+        x2 = self.d5(x)
+        x3 = self.d5(x)
+        x4 = self.d5(x)
+        x5 = self.d5(x)
+        x6 = self.d5(x)
+        x7 = self.d5(x)
+        x = tf.keras.layers.concatenate([x1, x2, x3, x4, x5, x6, x7], 0)  # 得到的是n*7行65列的数列
+        y = tf.reshape(x, [-1, 7, 65])
 
         return y
+
 
 # 2.baseline网络，调试完毕
 class Baseline(Model):
@@ -80,6 +86,7 @@ class Baseline(Model):
 
         return y
 
+
 # 3.AlexNet8网络,调试完毕
 class AlexNet8(Model):
     def __init__(self):
@@ -113,7 +120,6 @@ class AlexNet8(Model):
         self.d3 = Dense(7 * 65)
         self.r1 = Reshape([7, 65])
         self.a3 = Activation("softmax")
-
 
     def call(self, x):
         x = self.c1(x)
@@ -303,7 +309,7 @@ class ResnetBlock(Model):
 
 class ResNet18(Model):
 
-    def __init__(self, block_list=[2,2,2,2], initial_filters=64):  # block_list表示每个block有几个卷积层
+    def __init__(self, block_list=[2, 2, 2, 2], initial_filters=64):  # block_list表示每个block有几个卷积层
         super(ResNet18, self).__init__()
         self.num_blocks = len(block_list)  # 共有几个block
         self.block_list = block_list
@@ -339,6 +345,8 @@ class ResNet18(Model):
         x = self.r1(x)
         y = self.a2(x)
         return y
+
+
 #############################
 
 
@@ -470,7 +478,6 @@ class VGG16(Model):
         x = self.d6(x)
         x = self.f2(x)
         x = self.d7(x)
-
 
         x = self.f3(x)
         x = self.r1(x)

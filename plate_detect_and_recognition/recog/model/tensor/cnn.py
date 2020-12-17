@@ -19,8 +19,6 @@ class Train:
         self.x_test = None
         self.y_test = None
 
-        self.categorical_type = dic_config.get('categorical_type', 1)
-        self.validation_split = dic_config.get('validation_split', 0.2)
         self.demon = dic_config.get('demon', True)
 
         if 'x_test_path' in dic_config:
@@ -42,29 +40,22 @@ class Train:
 
     # 如果是sparse_categorical_crossentropy，那y就是原始的整数形式，比如[1, 0, 2, 0, 2]
     def train(self):
-        # self.model = Layer()
+        self.model = Layer()
         # self.model = Baseline()
         # self.model = AlexNet8()
         # self.model = Inception10()
         # self.model = LeNet5()
-        self.model = ResNet18()
+        # self.model = ResNet18()
         # self.model = VGG16()
 
-        if self.categorical_type == 1:
-            self.categorical()
-        elif self.categorical_type == 2:
-            self.sparse_categorical()
+        self.model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
+                           loss=tf.keras.losses.binary_crossentropy,  # loss函数计算的并不是多分类
+                           metrics=['accuracy'])  # metrics函数计算的并不是针对多分类
 
-        if self.validation_split == 0:
-            self.history = self.model.fit(self.x_train, self.y_train,
-                                          batch_size=16, epochs=10,
-                                          validation_data=(self.x_test, self.y_test),
-                                          validation_freq=1)
-        else:
-            self.history = self.model.fit(self.x_train, self.y_train,
-                                          batch_size=16, epochs=10,
-                                          validation_split=self.validation_split)
-
+        self.history = self.model.fit(self.x_train, self.y_train,
+                                      batch_size=64, epochs=10,
+                                      validation_data=(self.x_test, self.y_test),
+                                      validation_freq=1)
         self.model.summary()
 
     def evalute(self):
@@ -76,12 +67,8 @@ class Train:
         print(test_loss, test_acc)
 
     def show(self):
-        if self.categorical_type == 1:
-            acc = self.history.history['accuracy']
-            val_acc = self.history.history['val_accuracy']
-        elif self.categorical_type == 2:
-            acc = self.history.history['sparse_categorical_accuracy']
-            val_acc = self.history.history['val_sparse_categorical_accuracy']
+        acc = self.history.history['accuracy']
+        val_acc = self.history.history['val_accuracy']
 
         loss = self.history.history['loss']
         val_loss = self.history.history['val_loss']
