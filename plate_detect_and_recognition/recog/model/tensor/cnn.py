@@ -5,7 +5,9 @@ import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 from tensorflow.keras import Model
-from recog.layer.tensor.cnn import Layer, Baseline, AlexNet8, Inception10, LeNet5, ResNet18, VGG16
+from recog.layer.tensor.cnn import Layer, Baseline, AlexNet8, Inception10, LeNet5, ResNet18, VGG16,MineGRU
+
+
 
 
 class Train:
@@ -40,17 +42,22 @@ class Train:
 
     # 如果是sparse_categorical_crossentropy，那y就是原始的整数形式，比如[1, 0, 2, 0, 2]
     def train(self):
-        self.model = Layer()
+        # self.model = Layer()
         # self.model = Baseline()
         # self.model = AlexNet8()
         # self.model = Inception10()
         # self.model = LeNet5()
         # self.model = ResNet18()
         # self.model = VGG16()
+        self.model = MineGRU()
 
-        self.model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.001),
-                           loss=tf.keras.losses.binary_crossentropy,  # loss函数计算的并不是多分类
-                           metrics=['accuracy'])  # metrics函数计算的并不是针对多分类
+        self.model.compile(
+            optimizer=tf.keras.optimizers.Adam(lr=0.001),
+            loss=tf.keras.losses.categorical_crossentropy,
+            # loss=tf.nn.sigmoid_cross_entropy_with_logits,  # pytorch中的loss有多标签分类的函数，
+            # 也可以是binary_crossentropy，
+            metrics=['accuracy']
+        )  # metrics函数计算的并不是针对多分类
 
         self.history = self.model.fit(self.x_train, self.y_train,
                                       batch_size=64, epochs=10,

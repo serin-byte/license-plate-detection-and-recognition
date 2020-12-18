@@ -2,7 +2,7 @@
 import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Conv2D, Activation, Flatten, Dense, MaxPooling2D, BatchNormalization, Reshape, \
-    Dropout, MaxPool2D, GlobalAveragePooling2D,AveragePooling2D
+    Dropout, MaxPool2D, GlobalAveragePooling2D,AveragePooling2D,RepeatVector,Bidirectional,GRU,TimeDistributed
 import numpy as np
 
 
@@ -50,6 +50,44 @@ class Layer(Model):
 
         return y
 
+# 1.1 GRU+CNN网络
+class MineGRU(Model):
+    def __init__(self):
+        super(MineGRU, self).__init__()
+        self.c1 = Conv2D(32, (5, 5))
+        self.p1 = MaxPooling2D((2, 2), strides=1)
+        self.a1 = Activation('relu')
+
+        self.c2 = Conv2D(32, (5, 5))
+        self.p2 = AveragePooling2D((2, 2), strides=1)
+        self.a2 = Activation('relu')
+
+        self.f1 = Flatten()
+        self.d1 = Dense(128)
+        self.R1 = RepeatVector(7)
+        self.B1 = Bidirectional(GRU(128, return_sequences=True))
+        self.T1 = TimeDistributed(Dense(65))
+        self.a3 = Activation('softmax')
+
+
+
+    def call(self, x):
+        x = self.c1(x)
+        x = self.p1(x)
+        x = self.a1(x)
+
+        x = self.c2(x)
+        x = self.p2(x)
+        x = self.a2(x)
+
+        x = self.f1(x)
+        x = self.d1(x)
+        x = self.R1(x)
+        x = self.B1(x)
+        x = self.T1(x)
+        y = self.a3(x)
+
+        return y
 
 # 2.baseline网络，调试完毕
 class Baseline(Model):
